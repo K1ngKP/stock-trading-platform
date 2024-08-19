@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import StockChart from '../utils/StockChart';
 const StockDetails = () => {
     const [stockData, setStockData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
+
     const fetchStockData = async () => {
       const apiKey = 'AAMUKLV56767876P';  
       const symbol = 'IBM';
@@ -36,14 +36,21 @@ const StockDetails = () => {
       }
     };
 
+    
+    
     console.log(stockData);
-    fetchStockData();
-  }, []);
+    const handleButtonClick = () => {
+      fetchStockData();
+    };
+
 
   return (
     <div className="container mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Stock Details</h2>
-      
+      <button onClick={handleButtonClick}>
+          Here
+      </button>
+      <StockChart stockData={stockData} />
     </div>
   );
 };
