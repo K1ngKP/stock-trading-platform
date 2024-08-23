@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import StockChart from '../utils/StockChart';
-import { stocksDataList } from './stocksDataList'
+import { stocksDataList } from './stocksDataList'; 
 
 const StockDetails = () => {
   const [stockData, setStockData] = useState([]);
@@ -10,21 +10,21 @@ const StockDetails = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSymbol, setSelectedSymbol] = useState('');
   const [filteredStocks, setFilteredStocks] = useState(stocksDataList);
+  const [selectedInterval, setSelectedInterval] = useState('5min'); 
 
-  const apiKey = 'AAMUKLV56767876P'; // Replace with your actual API key
+  const apiKey = 'AAMUKLV56767876P'; 
   const intervals = ["1min", "5min", "15min", "30min", "60min"];
 
   const fetchStockData = async () => {
     if (!selectedSymbol) return;
 
-    const interval = '5min';
-    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${selectedSymbol}&interval=${interval}&apikey=${apiKey}`;
+    const url = `https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol=${selectedSymbol}&interval=${selectedInterval}&apikey=${apiKey}`;
 
     try {
       setLoading(true);
       const response = await axios.get(url);
       if (response.status === 200) {
-        const data = response.data['Time Series (5min)'];
+        const data = response.data[`Time Series (${selectedInterval})`];
         const formattedData = Object.keys(data).map(key => ({
           time: key,
           open: data[key]['1. open'],
@@ -44,23 +44,18 @@ const StockDetails = () => {
     }
   };
 
-  // Handle search input change
   const handleSearchChange = (e) => {
     const term = e.target.value.toLowerCase();
     setSearchTerm(term);
-
-    // Filter stock list based on search term (by name or symbol)
     const filtered = stocksDataList.filter(stock => 
       stock.name.toLowerCase().includes(term) || stock.symbol.toLowerCase().includes(term)
     );
     setFilteredStocks(filtered);
   };
-
-  // Handle selecting a stock from the dropdown
   const handleSelectStock = (symbol) => {
     setSelectedSymbol(symbol);
-    setSearchTerm(''); // Clear the search field after selecting
-    setFilteredStocks([]); // Hide the dropdown after selection
+    setSearchTerm('');
+    setFilteredStocks([]);
   };
 
   return (
@@ -90,6 +85,22 @@ const StockDetails = () => {
         )}
       </div>
 
+      <div className="mb-4">
+        <label htmlFor="interval" className="mr-2">Select Interval:</label>
+        <select
+          id="interval"
+          value={selectedInterval}
+          onChange={(e) => setSelectedInterval(e.target.value)}
+          className="border rounded p-2"
+        >
+          {intervals.map((interval) => (
+            <option key={interval} value={interval}>
+              {interval}
+            </option>
+          ))}
+        </select>
+      </div>
+
       {selectedSymbol && (
         <div className="mb-4">
           <p>Selected Symbol: <strong>{selectedSymbol}</strong></p>
@@ -107,7 +118,7 @@ const StockDetails = () => {
       ) : error ? (
         <p className="text-red-500">{error}</p>
       ) : (
-        <StockChart stockData={stockData} />
+        <StockChart key={selectedSymbol + selectedInterval} stockData={stockData} />
       )}
     </div>
   );

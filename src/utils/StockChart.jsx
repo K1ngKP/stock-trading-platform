@@ -3,6 +3,7 @@ import { Chart } from 'chart.js/auto';
 
 const StockChart = ({ stockData }) => {
   const chartRef = useRef(null);
+  const chartInstanceRef = useRef(null); // Separate ref for the chart instance
 
   useEffect(() => {
     if (!stockData.length) return;
@@ -14,12 +15,12 @@ const StockChart = ({ stockData }) => {
     const closePrices = stockData.map(item => parseFloat(item.close)).reverse();
 
     // Destroy the existing chart instance if it exists
-    if (chartRef.current.chartInstance) {
-      chartRef.current.chartInstance.destroy();
+    if (chartInstanceRef.current) {
+      chartInstanceRef.current.destroy();
     }
 
     // Creating the new chart
-    chartRef.current.chartInstance = new Chart(ctx, {
+    chartInstanceRef.current = new Chart(ctx, {
       type: 'line',
       data: {
         labels,
@@ -62,8 +63,8 @@ const StockChart = ({ stockData }) => {
 
     // Cleanup to avoid memory leaks
     return () => {
-      if (chartRef.current.chartInstance) {
-        chartRef.current.chartInstance.destroy();
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
       }
     };
   }, [stockData]);
