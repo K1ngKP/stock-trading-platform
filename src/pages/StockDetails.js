@@ -106,7 +106,7 @@ const StockDetails = () => {
           <p>Selected Symbol: <strong>{selectedSymbol}</strong></p>
           <button
             onClick={fetchStockData}
-            className="bg-blue-500 text-white py-2 px-4 rounded"
+            className="bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white py-2 px-4 rounded"
           >
             Fetch Data
           </button>
