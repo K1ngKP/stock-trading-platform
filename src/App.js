@@ -7,7 +7,7 @@ import StockDetails from './pages/StockDetails';
 const App = () => {
   return (
     <Router>
-      <div>
+      <div className="">
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
